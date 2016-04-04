@@ -11,6 +11,7 @@ public class LinkedDator {
             List<SemanticResource> semanticResources = semanticDescription.getSemanticResources();
             for (SemanticResource semanticResource : semanticResources) {
                 System.out.println("Entidade: " + semanticResource.getEntity());
+                System.out.println(semanticResource.getUriTemplates());
                 Collection<String> resourcesSemantics = semanticResource.getProperties().values();
                 for (String prop : resourcesSemantics) {
                     System.out.println(prop);

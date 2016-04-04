@@ -12,6 +12,7 @@ import smsesimulator.infrastructure.MessageChannel;
 import smsesimulator.infrastructure.Publisher;
 import smsesimulator.infrastructure.Subscriber;
 import smsesimulator.infrastructure.WebApi;
+import smsesimulator.infrastructure.HttpResponse.HttpResponseBuilder;
 
 public class SemanticGateway implements Publisher, Subscriber, WebApi {
 
@@ -51,12 +52,14 @@ public class SemanticGateway implements Publisher, Subscriber, WebApi {
 
     @Override
     public HttpResponse processRequest(HttpRequest req) {
-        if (req != null) {
-            HttpResponse resp = semanticMicroservices.get(0).processRequest(req);
-            System.out.println(resp.toString());
-        } else {
-            System.out.println(semanticDescriptions);
+        if (req.getResource().equals("semanticDescription")) {
+            return new HttpResponseBuilder().body(this.getSemanticDescriptions()).build();
         }
+        
+        System.out.println(String.format("GATEWAY: Processing: %s for %s", req.getUriBase(), req.getResource()));
+        
+           
+       
         return null;
     }
     

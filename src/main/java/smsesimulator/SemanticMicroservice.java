@@ -1,6 +1,8 @@
 package smsesimulator;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gson.Gson;
 
@@ -18,6 +20,7 @@ public class SemanticMicroservice implements Publisher, Subscriber, WebApi {
     private String uriBase;
     List<SemanticResource> semanticResources;
     private SemanticDescription semanticDescription;
+    private transient Map<String, SemanticResource> resourcesMap = new HashMap<>();
 
     public SemanticMicroservice() {
         this.uriBase = DhcpServer.getIpAddress();
@@ -25,7 +28,22 @@ public class SemanticMicroservice implements Publisher, Subscriber, WebApi {
     }
 
     public HttpResponse processRequest(HttpRequest req) {
-        return new HttpResponseBuilder().body(semanticResources.get(0).serializeAnExample()).build();
+        System.out.println(String.format("Processing: %s for %s", req.getUriBase(), req.getResource()));
+        if (!req.getUriBase().equals(uriBase)) {
+            return new HttpResponseBuilder().body("Not found").build();
+        }
+        String resource = req.getResource();
+
+        // creating a map to facilitate the search for the requested resource
+        for (SemanticResource semanticResource : semanticResources) {
+            resourcesMap.put(semanticResource.getEntity(), semanticResource);
+        }
+
+        SemanticResource semanticResource = resourcesMap.get(resource);
+        if(semanticResource == null){
+            return new HttpResponseBuilder().body("Not found").build();
+        }
+        return new HttpResponseBuilder().body(semanticResource.serializeAnExample()).build();
     }
 
     public void register() {

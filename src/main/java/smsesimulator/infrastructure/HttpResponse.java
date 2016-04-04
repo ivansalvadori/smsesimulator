@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 
 public class HttpResponse {
     
-    private String body;
+    private Object body;
     
     public HttpResponse(HttpResponseBuilder builder) {
         this.body = builder.body;
@@ -16,17 +16,20 @@ public class HttpResponse {
     }
        
     public static class HttpResponseBuilder{
-        private String body;
+        private Object body;
         
-        public HttpResponseBuilder body(String body){
+        public HttpResponseBuilder body(Object body){
             this.body = body;
             return this;
         }
         
         public HttpResponse build(){
             return new HttpResponse(this);
-        }
-        
+        }        
+    }
+    
+    public Object getBody() {
+        return body;
     }
 
   
