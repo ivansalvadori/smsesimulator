@@ -1,4 +1,4 @@
-package smsesimulator;
+package smsesimulator.infrastructure;
 
 import java.util.Map;
 

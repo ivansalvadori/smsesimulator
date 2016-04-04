@@ -2,6 +2,8 @@ package smsesimulator;
 
 import java.util.List;
 
+import com.google.gson.Gson;
+
 public class SemanticDescription {
 
 	private String uriBase;
@@ -10,6 +12,11 @@ public class SemanticDescription {
 	public SemanticDescription(String uriBase, List<SemanticResource> semanticResources) {
 		this.uriBase = uriBase;
 		this.semanticResources = semanticResources;
+	}
+	
+	@Override
+	public String toString() {
+	    return new Gson().toJson(this);
 	}
 	
 	public List<SemanticResource> getSemanticResources() {

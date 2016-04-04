@@ -8,12 +8,14 @@ import java.util.List;
 
 import com.jayway.jsonpath.JsonPath;
 
-public class Executor {
+public class Simulator {
+    
+    private List<SemanticMicroservice> semanticMicroservices = new ArrayList<>();
 
 	public void createScenario(String filePath) throws IOException {
 		String jsonScenario = new String(Files.readAllBytes(Paths.get(filePath)));
-		List<SemanticMicroservice> semanticMicroservices = createSemanticMicroservices(jsonScenario);
-		MessageChannel.send("requestForDescription");
+		semanticMicroservices = createSemanticMicroservices(jsonScenario);
+		System.out.println(String.format("Scenario has been created. %d microservices detected.", semanticMicroservices.size()));
 	}
 
 	private List<SemanticMicroservice> createSemanticMicroservices(String jsonScenario) {
@@ -26,4 +28,8 @@ public class Executor {
 		}
 		return list;
 	}
+	
+	public List<SemanticMicroservice> getSemanticMicroservices() {
+        return semanticMicroservices;
+    }
 }

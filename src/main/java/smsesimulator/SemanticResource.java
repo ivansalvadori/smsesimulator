@@ -3,6 +3,10 @@ package smsesimulator;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gson.Gson;
+
+import smsesimulator.infrastructure.UriTemplate;
+
 public class SemanticResource {
 
 	private String entity;
@@ -31,6 +35,10 @@ public class SemanticResource {
 
 	public void setUriTemplates(List<UriTemplate> uriTemplates) {
 		this.uriTemplates = uriTemplates;
+	}
+	
+	public String serializeAnExample(){
+	    return new Gson().toJson(properties);
 	}
 
 }

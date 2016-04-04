@@ -1,6 +1,8 @@
-package smsesimulator;
+package smsesimulator.infrastructure;
 
 import java.util.List;
+
+import smsesimulator.SemanticResource;
 
 public class Consumer {
 	

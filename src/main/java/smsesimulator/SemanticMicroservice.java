@@ -4,49 +4,58 @@ import java.util.List;
 
 import com.google.gson.Gson;
 
-public class SemanticMicroservice implements Publisher, Subscriber {
+import smsesimulator.infrastructure.DhcpServer;
+import smsesimulator.infrastructure.HttpRequest;
+import smsesimulator.infrastructure.HttpResponse;
+import smsesimulator.infrastructure.HttpResponse.HttpResponseBuilder;
+import smsesimulator.infrastructure.MessageChannel;
+import smsesimulator.infrastructure.Publisher;
+import smsesimulator.infrastructure.Subscriber;
+import smsesimulator.infrastructure.WebApi;
 
-	private String uriBase;
-	List<SemanticResource> semanticResources;
-	private SemanticDescription semanticDescription;
+public class SemanticMicroservice implements Publisher, Subscriber, WebApi {
 
-	public SemanticMicroservice() {		
-		this.register();		
-	}
+    private String uriBase;
+    List<SemanticResource> semanticResources;
+    private SemanticDescription semanticDescription;
 
-	public HttpResponse processRequest(HttpRequest req) {
-		return null;
-	}
+    public SemanticMicroservice() {
+        this.uriBase = DhcpServer.getIpAddress();
+        this.register();
+    }
 
-	public void register() {
-		MessageChannel.registerAsPublisher(this);
-		MessageChannel.registerAsSubscriber(this);
-	}
+    public HttpResponse processRequest(HttpRequest req) {
+        return new HttpResponseBuilder().body(semanticResources.get(0).serializeAnExample()).build();
+    }
 
-	@Override
-	public void receiveMessage(String msg) {
-		if (msg.equals("requestForDescription")) {
-			semanticDescription = new SemanticDescription(uriBase, semanticResources);
-			MessageChannel.send(new Gson().toJson(this.semanticDescription));
-		}
-	}
+    public void register() {
+        MessageChannel.registerAsPublisher(this);
+        MessageChannel.registerAsSubscriber(this);
+    }
 
-	@Override
-	public void sendMessage(String msg) {
-		MessageChannel.send(msg);
+    @Override
+    public void receiveMessage(String msg) {
+        if (msg.equals("requestForDescription")) {
+            MessageChannel.send(new Gson().toJson(this.getSemanticDescription()));
+        }
+    }
 
-	}
+    @Override
+    public void sendMessage(String msg) {
+        MessageChannel.send(msg);
+    }
 
-	public List<SemanticResource> getSemanticResources() {
-		return semanticResources;
-	}
+    public List<SemanticResource> getSemanticResources() {
+        return semanticResources;
+    }
 
-	public void setSemanticResources(List<SemanticResource> semanticResources) {
-		this.semanticResources = semanticResources;
-	}
-	
-	public SemanticDescription getSemanticDescription() {
-		return semanticDescription;
-	}
+    public void setSemanticResources(List<SemanticResource> semanticResources) {
+        this.semanticResources = semanticResources;
+    }
+
+    public SemanticDescription getSemanticDescription() {
+        this.semanticDescription = new SemanticDescription(uriBase, semanticResources);
+        return semanticDescription;
+    }
 
 }

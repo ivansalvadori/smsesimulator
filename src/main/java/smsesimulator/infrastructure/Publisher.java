@@ -1,4 +1,4 @@
-package smsesimulator;
+package smsesimulator.infrastructure;
 
 public interface Publisher {
 	
