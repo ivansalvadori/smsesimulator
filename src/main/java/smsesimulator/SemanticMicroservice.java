@@ -28,7 +28,7 @@ public class SemanticMicroservice implements Publisher, Subscriber, WebApi {
     }
 
     public HttpResponse processRequest(HttpRequest req) {
-        System.out.println(String.format("Processing: %s for %s", req.getUriBase(), req.getResource()));
+        System.out.println(String.format("MICROSERVICE: %s received %s", req.getUriBase(), req.getFullUri()));
         if (!req.getUriBase().equals(uriBase)) {
             return new HttpResponseBuilder().body("Not found").build();
         }

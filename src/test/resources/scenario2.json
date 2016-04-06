@@ -1,0 +1,56 @@
+{
+  "semanticMicroservices": [
+    {
+      "semanticResources": [
+        {
+          "entity": "example.com/ontology/Entity1",
+          "properties": {
+            "p1": "example.com/ontology/property1",
+            "p2": "example.com/ontology/property2",
+            "p3": "example.com/ontology/property3",
+            "p1E1E2": "example.com/ontology/property1E1E2"
+          },
+          "uriTemplates": [
+            {
+              "method": "GET",
+              "uri": "resource1/{x}/{y}",
+              "parameters": {
+                "x": "example.com/ontology/property1",
+                "y": "example.com/ontology/property2"
+              }
+            },
+            {
+              "method": "GET",
+              "uri": "resource1/{x}",
+              "parameters": {
+                "x": "example.com/ontology/property1",
+                "y": "example.com/ontology/property2"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "semanticResources": [        
+        {
+          "entity": "example.com/ontology/Entity2",
+          "properties": {
+            "p1": "example.com/ontology/property21",
+            "p2": "example.com/ontology/property22",
+            "p3": "example.com/ontology/property23"
+          },
+          "uriTemplates": [
+            {
+              "method": "GET",
+              "uri": "resource2/{x}",
+              "parameters": {
+                "x": "example.com/ontology/property21"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

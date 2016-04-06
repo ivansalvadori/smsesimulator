@@ -17,8 +17,6 @@ public class LinkedDator {
                     System.out.println(prop);
                 }
             }
-        }
-        
-    }
-    
+        }        
+    }    
 }

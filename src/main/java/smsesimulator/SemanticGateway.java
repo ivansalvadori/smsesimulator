@@ -1,7 +1,9 @@
 package smsesimulator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gson.Gson;
 
@@ -11,6 +13,7 @@ import smsesimulator.infrastructure.HttpResponse;
 import smsesimulator.infrastructure.MessageChannel;
 import smsesimulator.infrastructure.Publisher;
 import smsesimulator.infrastructure.Subscriber;
+import smsesimulator.infrastructure.UriTemplate;
 import smsesimulator.infrastructure.WebApi;
 import smsesimulator.infrastructure.HttpResponse.HttpResponseBuilder;
 
@@ -18,6 +21,7 @@ public class SemanticGateway implements Publisher, Subscriber, WebApi {
 
     private List<SemanticDescription> semanticDescriptions = new ArrayList();
     private List<SemanticMicroservice> semanticMicroservices = new ArrayList<>();
+    Map<String, SemanticMicroservice> microserviceMap;
     private String uriBase;
 
     public SemanticGateway() {
@@ -25,6 +29,7 @@ public class SemanticGateway implements Publisher, Subscriber, WebApi {
         MessageChannel.registerAsPublisher(this);
         MessageChannel.registerAsSubscriber(this);
         sendMessage("requestForDescription");
+        microserviceMap = this.generateMicroserviceMap(this.semanticMicroservices);
     }
 
     public SemanticGateway(List<SemanticMicroservice> microservices) {
@@ -33,6 +38,7 @@ public class SemanticGateway implements Publisher, Subscriber, WebApi {
         for (SemanticMicroservice semanticMicroservice : microservices) {
             semanticDescriptions.add(semanticMicroservice.getSemanticDescription());
         }
+        microserviceMap = this.generateMicroserviceMap(this.semanticMicroservices);
     }
 
     @Override
@@ -52,19 +58,54 @@ public class SemanticGateway implements Publisher, Subscriber, WebApi {
 
     @Override
     public HttpResponse processRequest(HttpRequest req) {
-        if (req.getResource().equals("semanticDescription")) {
-            return new HttpResponseBuilder().body(this.getSemanticDescriptions()).build();
+        System.out.println(String.format("GATEWAY: %s received %s", req.getUriBase(), req.getFullUri()));
+
+        if (!req.getUriBase().equals(this.uriBase)) {
+            return new HttpResponseBuilder().body("Not found").build();
+
         }
-        
-        System.out.println(String.format("GATEWAY: Processing: %s for %s", req.getUriBase(), req.getResource()));
-        
-           
-       
+
+        if (req.getResource().equals("semanticDescription")) {
+            return new HttpResponseBuilder().body(this.generateGatewayDescription(this.semanticDescriptions)).build();
+        }
+
+        // Here is where the gateway request the microservices
+        String requestedUri = req.getFullUri().replace(this.uriBase + "/","");
+        SemanticMicroservice semanticMicroservice = microserviceMap.get(requestedUri);
+        if (semanticMicroservice != null) {
+            HttpResponse response = semanticMicroservice.processRequest(new HttpRequest(requestedUri, null, semanticMicroservice.getSemanticDescription().getUriBase() + "/" + requestedUri));
+            return response;
+        }
         return null;
     }
-    
+
+    private GatewayDescription generateGatewayDescription(List<SemanticDescription> microserviceDescriptions) {
+        return new GatewayDescription(this.uriBase, microserviceDescriptions);
+
+    }
+
+    private Map<String, SemanticMicroservice> generateMicroserviceMap(List<SemanticMicroservice> semanticMicroservices) {
+        Map<String, SemanticMicroservice> map = new HashMap<>();
+
+        for (SemanticMicroservice semanticMicroservice : semanticMicroservices) {
+            List<SemanticResource> semanticResources = semanticMicroservice.getSemanticResources();
+            for (SemanticResource semanticResource : semanticResources) {
+                List<UriTemplate> uriTemplates = semanticResource.getUriTemplates();
+                for (UriTemplate uriTemplate : uriTemplates) {
+                    String uri = uriTemplate.getUri();
+                    map.put(uri, semanticMicroservice);
+                }
+            }
+        }
+        return map;
+    }
+
     public List<SemanticDescription> getSemanticDescriptions() {
         return semanticDescriptions;
+    }
+
+    public String getUriBase() {
+        return uriBase;
     }
 
 }
