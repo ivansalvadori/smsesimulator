@@ -32,20 +32,11 @@ public class SimulatorTest {
         System.out.println(response);
     }
 
-    @Test
-    public void LinkedDatorTest() throws IOException {
-        Simulator executor = new Simulator();
-        executor.createScenario("src/test/resources/scenario1.json");
-        SemanticGateway semanticGateway = new SemanticGateway(executor.getSemanticMicroservices());
-        List<SemanticDescription> semanticDescriptions = semanticGateway.getSemanticDescriptions();
-        LinkedDator lk = new LinkedDator();
-        lk.analizeSemanticDescritptions(semanticDescriptions);
-    }
 
     @Test
     public void invocationMicroservicesTest() throws IOException {
         Simulator executor = new Simulator();
-        executor.createScenario("src/test/resources/scenario2.json");
+        executor.createScenario("src/test/resources/scenario1.json");
         SemanticGateway semanticGateway = new SemanticGateway(executor.getSemanticMicroservices());
 
         HttpResponse response = semanticGateway.processRequest(new HttpRequest(semanticGateway.getUriBase(), "semanticDescription", semanticGateway.getUriBase() + "/semanticDescription"));
@@ -54,9 +45,17 @@ public class SimulatorTest {
         for (SemanticResource semanticResource : semanticResources) {
             List<UriTemplate> uriTemplates = semanticResource.getUriTemplates();
             for (UriTemplate uriTemplate : uriTemplates) {
-                semanticGateway.processRequest(new HttpRequest(semanticGateway.getUriBase(), semanticResource.getEntity(), semanticGateway.getUriBase() + "/" + uriTemplate.getUri()));
-
+                HttpResponse microserviceResponse = semanticGateway.processRequest(new HttpRequest(semanticGateway.getUriBase(), semanticResource.getEntity(), semanticGateway.getUriBase() + "/" + uriTemplate.getUri()));
+                System.out.println(microserviceResponse);
             }
         }
     }
+    
+    @Test
+    public void LinkedDatorTest() throws IOException {
+        LinkedDator lk = new LinkedDator();        
+    }
+    
+    
+    
 }

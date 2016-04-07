@@ -13,6 +13,7 @@ import smsesimulator.infrastructure.HttpResponse.HttpResponseBuilder;
 import smsesimulator.infrastructure.MessageChannel;
 import smsesimulator.infrastructure.Publisher;
 import smsesimulator.infrastructure.Subscriber;
+import smsesimulator.infrastructure.UriTemplate;
 import smsesimulator.infrastructure.WebApi;
 
 public class SemanticMicroservice implements Publisher, Subscriber, WebApi {
@@ -36,7 +37,10 @@ public class SemanticMicroservice implements Publisher, Subscriber, WebApi {
 
         // creating a map to facilitate the search for the requested resource
         for (SemanticResource semanticResource : semanticResources) {
-            resourcesMap.put(semanticResource.getEntity(), semanticResource);
+            List<UriTemplate> uriTemplates = semanticResource.getUriTemplates();
+            for (UriTemplate uriTemplate : uriTemplates) {
+                resourcesMap.put(uriTemplate.getUri(), semanticResource);               
+            }
         }
 
         SemanticResource semanticResource = resourcesMap.get(resource);

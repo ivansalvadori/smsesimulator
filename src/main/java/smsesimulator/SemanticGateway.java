@@ -70,13 +70,22 @@ public class SemanticGateway implements Publisher, Subscriber, WebApi {
         }
 
         // Here is where the gateway request the microservices
-        String requestedUri = req.getFullUri().replace(this.uriBase + "/","");
-        SemanticMicroservice semanticMicroservice = microserviceMap.get(requestedUri);
+        String requestedResource = req.getFullUri().replace(this.uriBase + "/", "");
+        SemanticMicroservice semanticMicroservice = microserviceMap.get(requestedResource);
         if (semanticMicroservice != null) {
-            HttpResponse response = semanticMicroservice.processRequest(new HttpRequest(requestedUri, null, semanticMicroservice.getSemanticDescription().getUriBase() + "/" + requestedUri));
+            String microservicesUriBase = semanticMicroservice.getSemanticDescription().getUriBase();
+            HttpResponse response = semanticMicroservice.processRequest(new HttpRequest(microservicesUriBase, requestedResource, semanticMicroservice.getSemanticDescription().getUriBase() + "/" + requestedResource));
+            Map<String, String> representationWithLinks = createLinks(this.semanticDescriptions, response);
+            response.setBody(representationWithLinks);
             return response;
         }
         return null;
+    }
+
+    private Map<String, String> createLinks(List<SemanticDescription> semanticDescriptions2, HttpResponse response) {
+        LinkedDator linkedDator = new LinkedDator();
+        Map<String, String> body = (Map<String, String>) response.getBody();
+        return linkedDator.createLinks(semanticDescriptions2, body, this.getUriBase());
     }
 
     private GatewayDescription generateGatewayDescription(List<SemanticDescription> microserviceDescriptions) {

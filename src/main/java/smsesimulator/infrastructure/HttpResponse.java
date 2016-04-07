@@ -31,6 +31,10 @@ public class HttpResponse {
     public Object getBody() {
         return body;
     }
+    
+    public void setBody(Object body) {
+        this.body = body;
+    }
 
   
 

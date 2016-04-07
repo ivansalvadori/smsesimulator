@@ -1,0 +1,135 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+]>
+
+
+<rdf:RDF xmlns="http://www.semanticweb.org/ivan/ontologies/2016/3/untitled-ontology-12#"
+     xml:base="http://www.semanticweb.org/ivan/ontologies/2016/3/untitled-ontology-12"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property1E1E2 -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property1E1E2">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#Entity1"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#Entity2"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property10 -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property10">
+        <rdfs:domain>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&owl;topObjectProperty"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#Entity1"/>
+            </owl:Restriction>
+        </rdfs:domain>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property11 -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property11">
+        <rdfs:domain>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&owl;topObjectProperty"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#Entity1"/>
+            </owl:Restriction>
+        </rdfs:domain>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property12 -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property12">
+        <rdfs:domain>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&owl;topObjectProperty"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#Entity1"/>
+            </owl:Restriction>
+        </rdfs:domain>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property20 -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property20"/>
+    
+
+
+    <!-- http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property21 -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property21"/>
+    
+
+
+    <!-- http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property22 -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property22"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#Entity1 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#Entity1"/>
+    
+
+
+    <!-- http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#Entity2 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#Entity2"/>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.5.1) http://owlapi.sourceforge.net -->
+
