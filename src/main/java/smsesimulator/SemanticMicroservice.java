@@ -1,5 +1,6 @@
 package smsesimulator;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,15 +40,15 @@ public class SemanticMicroservice implements Publisher, Subscriber, WebApi {
         for (SemanticResource semanticResource : semanticResources) {
             List<UriTemplate> uriTemplates = semanticResource.getUriTemplates();
             for (UriTemplate uriTemplate : uriTemplates) {
-                resourcesMap.put(uriTemplate.getUri(), semanticResource);               
+                resourcesMap.put(uriTemplate.getUri(), semanticResource);
             }
         }
 
         SemanticResource semanticResource = resourcesMap.get(resource);
-        if(semanticResource == null){
+        if (semanticResource == null) {
             return new HttpResponseBuilder().body("Not found").build();
         }
-        return new HttpResponseBuilder().body(semanticResource.serializeAnExample()).build();
+        return new HttpResponseBuilder().body(this.serializeAnRepresentation(semanticResource)).build();
     }
 
     public void register() {
@@ -80,4 +81,15 @@ public class SemanticMicroservice implements Publisher, Subscriber, WebApi {
         return semanticDescription;
     }
 
+    private Object serializeAnRepresentation(SemanticResource semanticResource) {
+        Map<String, String> representation = new HashMap<>();
+
+        Collection<String> semanticProperties = semanticResource.getProperties().values();
+        for (String semanticProperty : semanticProperties) {
+            representation.put(semanticProperty, "01010101010");
+        }
+        
+        representation.put("entity", semanticResource.getEntity());
+        return representation;
+    }
 }

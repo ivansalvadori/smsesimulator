@@ -35,9 +35,6 @@ public class SemanticResource {
         this.uriTemplates = uriTemplates;
     }
 
-    public Object serializeAnExample() {
-        this.properties.put("entity", this.entity);
-        return this.properties;
-    }
+    
 
 }
