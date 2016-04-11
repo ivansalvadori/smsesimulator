@@ -5,38 +5,35 @@ import java.util.List;
 
 import org.junit.Test;
 
+import smsesimulator.GatewayDescription;
+import smsesimulator.SemanticGateway;
+import smsesimulator.SemanticResource;
 import smsesimulator.Simulator;
 import smsesimulator.infrastructure.HttpRequest;
 import smsesimulator.infrastructure.HttpResponse;
 import smsesimulator.infrastructure.UriTemplate;
-import smsesimulator.GatewayDescription;
-import smsesimulator.LinkedDator;
-import smsesimulator.SemanticDescription;
-import smsesimulator.SemanticGateway;
-import smsesimulator.SemanticResource;
 
-public class SimulatorTest {
+public class Scenario2Test {
 
     @Test
     public void createScenarioTest() throws IOException {
         Simulator executor = new Simulator();
-        executor.createScenario("src/test/resources/scenario1.json");
+        executor.createScenario("src/test/resources/scenario2.json");
     }
 
     @Test
     public void gatewayDescriptionTest() throws IOException {
         Simulator executor = new Simulator();
-        executor.createScenario("src/test/resources/scenario1.json");
+        executor.createScenario("src/test/resources/scenario2.json");
         SemanticGateway semanticGateway = new SemanticGateway(executor.getSemanticMicroservices());
         HttpResponse response = semanticGateway.processRequest(new HttpRequest(semanticGateway.getUriBase(), "semanticDescription", semanticGateway.getUriBase() + "/semanticDescription"));
         System.out.println(response);
     }
 
-
     @Test
     public void invocationMicroservicesTest() throws IOException {
         Simulator executor = new Simulator();
-        executor.createScenario("src/test/resources/scenario1.json");
+        executor.createScenario("src/test/resources/scenario2.json");
         SemanticGateway semanticGateway = new SemanticGateway(executor.getSemanticMicroservices());
 
         HttpResponse response = semanticGateway.processRequest(new HttpRequest(semanticGateway.getUriBase(), "semanticDescription", semanticGateway.getUriBase() + "/semanticDescription"));
@@ -50,12 +47,4 @@ public class SimulatorTest {
             }
         }
     }
-    
-    @Test
-    public void LinkedDatorTest() throws IOException {
-        LinkedDator lk = new LinkedDator();        
-    }
-    
-    
-    
 }

@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.jena.ontology.ObjectProperty;
 import org.apache.jena.ontology.OntModel;
@@ -21,8 +22,8 @@ public class LinkedDator {
 
     public Map<String, String> createLinks(List<SemanticDescription> semanticDescriptions, Map<String, String> resourceRepresentation, String uriBase) {
 
-        Map<String, String> mapOfUris = new HashMap<>();
-        Map<String, SemanticResource> mapResourceUris = new HashMap<>();
+        Map<String, String> mapEnityToUri = new HashMap<>();
+        Map<String, SemanticResource> mapEntityToResource = new HashMap<>();
 
         for (SemanticDescription semanticDescription : semanticDescriptions) {
             List<SemanticResource> semanticResources = semanticDescription.getSemanticResources();
@@ -31,22 +32,27 @@ public class LinkedDator {
                 for (UriTemplate uriTemplate : uriTemplates) {
                     String entity = semanticResource.getEntity();
                     String uri = uriTemplate.getUri();
-                    mapOfUris.put(entity, uri);
-                    mapResourceUris.put(entity, semanticResource);
+                    mapEnityToUri.put(entity, uri);
+                    mapEntityToResource.put(entity, semanticResource);
                 }
             }
         }
 
-        OntModel ontology = this.loadOntology("src/test/resources/Ontology1.owl");
+        OntModel ontology = this.loadOntology("src/test/resources/Ontology2.owl");
         List<ObjectProperty> objectProperties = ontology.listObjectProperties().toList();
+
         String entity = resourceRepresentation.get("entity");
         for (ObjectProperty objectProperty : objectProperties) {
             OntResource range = objectProperty.getRange();
             OntResource domain = objectProperty.getDomain();
+            SemanticResource domainSemanticResource = mapEntityToResource.get(entity);
             if (domain.toString().equals(entity)) {
-                if (resourceCanResolveLink(mapResourceUris.get(entity), mapResourceUris.get(range.toString()).getUriTemplates())) {
+                Set<String> domainProperties = domainSemanticResource.getProperties().keySet();
+                if (domainProperties.contains(objectProperty.getURI())) {
+                    resourceRepresentation.put(objectProperty.getURI(), String.format("%s/%s", uriBase, mapEnityToUri.get(range.toString())));
+                } else if (resourceCanResolveLink(domainSemanticResource, mapEntityToResource.get(domain.toString()).getUriTemplates())) {
                     System.out.println("adicionar o link " + objectProperty.getURI() + " em " + entity + " para " + range.toString());
-                    resourceRepresentation.put(objectProperty.getURI(), String.format("%s/%s", uriBase, mapOfUris.get(range.toString())));
+                    resourceRepresentation.put(objectProperty.getURI(), String.format("%s/%s", uriBase, mapEnityToUri.get(range.toString())));
                 }
             }
         }

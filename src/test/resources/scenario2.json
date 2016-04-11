@@ -3,28 +3,21 @@
     {
       "semanticResources": [
         {
-          "entity": "example.com/ontology/Entity1",
+          "entity": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#Entity1",
           "properties": {
-            "p1": "example.com/ontology/property1",
-            "p2": "example.com/ontology/property2",
-            "p3": "example.com/ontology/property3",
-            "p1E1E2": "example.com/ontology/property1E1E2"
+            "p1": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property10",
+            "p2": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property11",
+            "p3": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property12",
+            "p4": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property1E1E2",
+            "p5": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property2E1E2"
           },
           "uriTemplates": [
             {
               "method": "GET",
               "uri": "resource1/{x}/{y}",
               "parameters": {
-                "x": "example.com/ontology/property1",
-                "y": "example.com/ontology/property2"
-              }
-            },
-            {
-              "method": "GET",
-              "uri": "resource1/{x}",
-              "parameters": {
-                "x": "example.com/ontology/property1",
-                "y": "example.com/ontology/property2"
+                "x": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property10",
+                "y": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property11"
               }
             }
           ]
@@ -34,20 +27,20 @@
     {
       "semanticResources": [        
         {
-          "entity": "example.com/ontology/Entity2",
+          "entity": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#Entity2",
           "properties": {
-            "p1": "example.com/ontology/property21",
-            "p2": "example.com/ontology/property22",
-            "p3": "example.com/ontology/property23"
+            "p1": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property20",
+            "p2": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property21",
+            "p3": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property22"
           },
           "uriTemplates": [
             {
               "method": "GET",
               "uri": "resource2/{x}",
               "parameters": {
-                "x": "example.com/ontology/property21"
+                "x": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property10"
               }
-            }
+            }            
           ]
         }
       ]
