@@ -10,15 +10,15 @@ import com.google.gson.Gson;
 import smsesimulator.infrastructure.DhcpServer;
 import smsesimulator.infrastructure.HttpRequest;
 import smsesimulator.infrastructure.HttpResponse;
+import smsesimulator.infrastructure.HttpResponse.HttpResponseBuilder;
 import smsesimulator.infrastructure.MessageChannel;
 import smsesimulator.infrastructure.Publisher;
 import smsesimulator.infrastructure.Subscriber;
 import smsesimulator.infrastructure.UriTemplate;
 import smsesimulator.infrastructure.WebApi;
-import smsesimulator.infrastructure.HttpResponse.HttpResponseBuilder;
 
 public class SemanticGateway implements Publisher, Subscriber, WebApi {
-
+    private String pathToOntologyFile;
     private List<SemanticDescription> semanticDescriptions = new ArrayList();
     private List<SemanticMicroservice> semanticMicroservices = new ArrayList<>();
     Map<String, SemanticMicroservice> microserviceMap;
@@ -32,7 +32,8 @@ public class SemanticGateway implements Publisher, Subscriber, WebApi {
         microserviceMap = this.generateMicroserviceMap(this.semanticMicroservices);
     }
 
-    public SemanticGateway(List<SemanticMicroservice> microservices) {
+    public SemanticGateway(String pathToOntologyFile, List<SemanticMicroservice> microservices) {
+        this.pathToOntologyFile = pathToOntologyFile;
         this.uriBase = DhcpServer.getIpAddress();
         this.semanticMicroservices = microservices;
         for (SemanticMicroservice semanticMicroservice : microservices) {
@@ -83,7 +84,7 @@ public class SemanticGateway implements Publisher, Subscriber, WebApi {
     }
 
     private Map<String, String> createLinks(List<SemanticDescription> semanticDescriptions2, HttpResponse response) {
-        LinkedDator linkedDator = new LinkedDator();
+        LinkedDator linkedDator = new LinkedDator(pathToOntologyFile);
         Map<String, String> body = (Map<String, String>) response.getBody();
         return linkedDator.createLinks(semanticDescriptions2, body, this.getUriBase());
     }

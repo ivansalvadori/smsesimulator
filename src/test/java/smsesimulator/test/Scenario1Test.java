@@ -6,7 +6,6 @@ import java.util.List;
 import org.junit.Test;
 
 import smsesimulator.GatewayDescription;
-import smsesimulator.LinkedDator;
 import smsesimulator.SemanticGateway;
 import smsesimulator.SemanticResource;
 import smsesimulator.Simulator;
@@ -26,7 +25,7 @@ public class Scenario1Test {
     public void gatewayDescriptionTest() throws IOException {
         Simulator executor = new Simulator();
         executor.createScenario("src/test/resources/scenario1.json");
-        SemanticGateway semanticGateway = new SemanticGateway(executor.getSemanticMicroservices());
+        SemanticGateway semanticGateway = new SemanticGateway("src/test/resources/Ontology1.owl", executor.getSemanticMicroservices());
         HttpResponse response = semanticGateway.processRequest(new HttpRequest(semanticGateway.getUriBase(), "semanticDescription", semanticGateway.getUriBase() + "/semanticDescription"));
         System.out.println(response);
     }
@@ -35,7 +34,7 @@ public class Scenario1Test {
     public void invocationMicroservicesTest() throws IOException {
         Simulator executor = new Simulator();
         executor.createScenario("src/test/resources/scenario1.json");
-        SemanticGateway semanticGateway = new SemanticGateway(executor.getSemanticMicroservices());
+        SemanticGateway semanticGateway = new SemanticGateway("src/test/resources/Ontology1.owl", executor.getSemanticMicroservices());
 
         HttpResponse response = semanticGateway.processRequest(new HttpRequest(semanticGateway.getUriBase(), "semanticDescription", semanticGateway.getUriBase() + "/semanticDescription"));
         GatewayDescription gatewayDescription = (GatewayDescription) response.getBody();
@@ -47,11 +46,6 @@ public class Scenario1Test {
                 System.out.println(microserviceResponse);
             }
         }
-    }
-
-    @Test
-    public void LinkedDatorTest() throws IOException {
-        LinkedDator lk = new LinkedDator();
     }
 
 }

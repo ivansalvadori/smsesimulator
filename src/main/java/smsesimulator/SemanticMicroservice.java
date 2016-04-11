@@ -29,6 +29,7 @@ public class SemanticMicroservice implements Publisher, Subscriber, WebApi {
         this.register();
     }
 
+    @Override
     public HttpResponse processRequest(HttpRequest req) {
         System.out.println(String.format("MICROSERVICE: %s received %s", req.getUriBase(), req.getFullUri()));
         if (!req.getUriBase().equals(uriBase)) {
@@ -86,9 +87,9 @@ public class SemanticMicroservice implements Publisher, Subscriber, WebApi {
 
         Collection<String> semanticProperties = semanticResource.getProperties().values();
         for (String semanticProperty : semanticProperties) {
-            representation.put(semanticProperty, "01010101010");
+            representation.put(semanticProperty, String.valueOf(Math.random()).replace("0.", ""));
         }
-        
+
         representation.put("entity", semanticResource.getEntity());
         return representation;
     }

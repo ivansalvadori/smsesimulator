@@ -25,7 +25,7 @@ public class Scenario2Test {
     public void gatewayDescriptionTest() throws IOException {
         Simulator executor = new Simulator();
         executor.createScenario("src/test/resources/scenario2.json");
-        SemanticGateway semanticGateway = new SemanticGateway(executor.getSemanticMicroservices());
+        SemanticGateway semanticGateway = new SemanticGateway("src/test/resources/Ontology2.owl", executor.getSemanticMicroservices());
         HttpResponse response = semanticGateway.processRequest(new HttpRequest(semanticGateway.getUriBase(), "semanticDescription", semanticGateway.getUriBase() + "/semanticDescription"));
         System.out.println(response);
     }
@@ -34,7 +34,7 @@ public class Scenario2Test {
     public void invocationMicroservicesTest() throws IOException {
         Simulator executor = new Simulator();
         executor.createScenario("src/test/resources/scenario2.json");
-        SemanticGateway semanticGateway = new SemanticGateway(executor.getSemanticMicroservices());
+        SemanticGateway semanticGateway = new SemanticGateway("src/test/resources/Ontology2.owl", executor.getSemanticMicroservices());
 
         HttpResponse response = semanticGateway.processRequest(new HttpRequest(semanticGateway.getUriBase(), "semanticDescription", semanticGateway.getUriBase() + "/semanticDescription"));
         GatewayDescription gatewayDescription = (GatewayDescription) response.getBody();

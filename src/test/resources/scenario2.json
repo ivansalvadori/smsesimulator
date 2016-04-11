@@ -38,7 +38,7 @@
               "method": "GET",
               "uri": "resource2/{x}",
               "parameters": {
-                "x": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property10"
+                "x": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property22"
               }
             }            
           ]

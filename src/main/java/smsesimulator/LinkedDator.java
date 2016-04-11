@@ -20,9 +20,16 @@ import smsesimulator.infrastructure.UriTemplate;
 
 public class LinkedDator {
 
+    private String pathToOntologyFile;
+
+    public LinkedDator(String pathToOntologyFile) {
+        this.pathToOntologyFile = pathToOntologyFile;
+    }
+
     public Map<String, String> createLinks(List<SemanticDescription> semanticDescriptions, Map<String, String> resourceRepresentation, String uriBase) {
 
-        Map<String, String> mapEnityToUri = new HashMap<>();
+        Map<String, String> mapEntityToUri = new HashMap<>();
+        Map<String, UriTemplate> mapUriToTemplate = new HashMap<>();
         Map<String, SemanticResource> mapEntityToResource = new HashMap<>();
 
         for (SemanticDescription semanticDescription : semanticDescriptions) {
@@ -32,13 +39,14 @@ public class LinkedDator {
                 for (UriTemplate uriTemplate : uriTemplates) {
                     String entity = semanticResource.getEntity();
                     String uri = uriTemplate.getUri();
-                    mapEnityToUri.put(entity, uri);
+                    mapEntityToUri.put(entity, uri);
                     mapEntityToResource.put(entity, semanticResource);
+                    mapUriToTemplate.put(uri, uriTemplate);
                 }
             }
         }
 
-        OntModel ontology = this.loadOntology("src/test/resources/Ontology2.owl");
+        OntModel ontology = this.loadOntology(pathToOntologyFile);
         List<ObjectProperty> objectProperties = ontology.listObjectProperties().toList();
 
         String entity = resourceRepresentation.get("entity");
@@ -47,17 +55,46 @@ public class LinkedDator {
             OntResource domain = objectProperty.getDomain();
             SemanticResource domainSemanticResource = mapEntityToResource.get(entity);
             if (domain.toString().equals(entity)) {
-                Set<String> domainProperties = domainSemanticResource.getProperties().keySet();
+                Collection<String> domainProperties = domainSemanticResource.getProperties().values();
+                String rangeUri = mapEntityToUri.get(range.toString());
                 if (domainProperties.contains(objectProperty.getURI())) {
-                    resourceRepresentation.put(objectProperty.getURI(), String.format("%s/%s", uriBase, mapEnityToUri.get(range.toString())));
+                    String resolvedLink = resolveLinkOneToN(objectProperty.getURI(), resourceRepresentation, mapUriToTemplate.get(rangeUri), uriBase);
+                    resourceRepresentation.put(objectProperty.getURI(), resolvedLink);
                 } else if (resourceCanResolveLink(domainSemanticResource, mapEntityToResource.get(domain.toString()).getUriTemplates())) {
-                    System.out.println("adicionar o link " + objectProperty.getURI() + " em " + entity + " para " + range.toString());
-                    resourceRepresentation.put(objectProperty.getURI(), String.format("%s/%s", uriBase, mapEnityToUri.get(range.toString())));
+                    String resolvedLink = resolveLinkOneToOne(resourceRepresentation, mapUriToTemplate.get(rangeUri), uriBase);
+                    resourceRepresentation.put(objectProperty.getURI(), resolvedLink);
                 }
             }
         }
 
         return resourceRepresentation;
+    }
+
+    // Not sure if this relation is oneToN
+    private String resolveLinkOneToN(String objectProperty, Map<String, String> resourceRepresentation, UriTemplate uriTemplate, String uriBase) {
+        String link = uriTemplate.getUri();
+        Set<String> parameterKeys = uriTemplate.getParameters().keySet();
+        for (String parameterKey : parameterKeys) {
+            String domainResourcePropertyValue = resourceRepresentation.get(objectProperty);
+            String parameterToReplace = String.format("{%s}", parameterKey);
+            link = link.replace(parameterToReplace, domainResourcePropertyValue);
+        }
+        link = String.format("%s/%s", uriBase, link);
+        return link;
+    }
+
+    // Not sure if this relation is oneToOne
+    private String resolveLinkOneToOne(Map<String, String> resourceRepresentation, UriTemplate uriTemplate, String uriBase) {
+        String link = uriTemplate.getUri();
+        Set<String> parameterKeys = uriTemplate.getParameters().keySet();
+        for (String parameterKey : parameterKeys) {
+            String parameterSemanticDefinition = uriTemplate.getParameters().get(parameterKey);
+            String domainResourcePropertyValue = resourceRepresentation.get(parameterSemanticDefinition);
+            String parameterToReplace = String.format("{%s}", parameterKey);
+            link = link.replace(parameterToReplace, domainResourcePropertyValue);
+        }
+        link = String.format("%s/%s", uriBase, link);
+        return link;
     }
 
     private boolean resourceCanResolveLink(SemanticResource domainSemanticResource, List<UriTemplate> rangeUriTemplates) {
