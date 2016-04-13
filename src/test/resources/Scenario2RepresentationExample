@@ -1,0 +1,29 @@
+======================================================
+A representation X on R1 from a semantic microservices
+====================================================== 
+{
+  "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property10": "0101",
+  "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property11": "1010",
+  "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property12": "10101",
+  "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#dscr_property1E1E2": {
+    "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property20": "10101",
+    "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property21": "0101"
+  }
+}
+
+=========================================================
+The representation X from R1 after API Gateway enrichment
+======================================================== 
+{
+  "@id": "linkR1"
+  "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property10": "10101",
+  "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property11": "10101",
+  "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property12": "10101",
+  "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property1E1E2": {
+    "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property20": "1010",
+    "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property21": "0101",
+    "@id": "linkR2"
+  }
+}
+
+If a property is defined as a object property in the ontology, the microservice should represent that property as a object with all the necessary properties to create a link to the related resource. 
