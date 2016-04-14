@@ -66,7 +66,7 @@ public class SemanticGateway implements Publisher, Subscriber, WebApi {
 
         }
 
-        if (req.getResource().equals("semanticDescription")) {
+        if (req.getFullUri().contains("/semanticDescription")) {
             return new HttpResponseBuilder().body(this.generateGatewayDescription(this.semanticDescriptions)).build();
         }
 
@@ -75,17 +75,17 @@ public class SemanticGateway implements Publisher, Subscriber, WebApi {
         SemanticMicroservice semanticMicroservice = microserviceMap.get(requestedResource);
         if (semanticMicroservice != null) {
             String microservicesUriBase = semanticMicroservice.getSemanticDescription().getUriBase();
-            HttpResponse response = semanticMicroservice.processRequest(new HttpRequest(microservicesUriBase, requestedResource, semanticMicroservice.getSemanticDescription().getUriBase() + "/" + requestedResource));
-            Map<String, String> representationWithLinks = createLinks(this.semanticDescriptions, response);
+            HttpResponse response = semanticMicroservice.processRequest(new HttpRequest(microservicesUriBase, semanticMicroservice.getSemanticDescription().getUriBase() + "/" + requestedResource));
+            Map<String, Object> representationWithLinks = createLinks(this.semanticDescriptions, response);
             response.setBody(representationWithLinks);
             return response;
         }
         return null;
     }
 
-    private Map<String, String> createLinks(List<SemanticDescription> semanticDescriptions2, HttpResponse response) {
+    private Map<String, Object> createLinks(List<SemanticDescription> semanticDescriptions2, HttpResponse response) {
         LinkedDator linkedDator = new LinkedDator(pathToOntologyFile);
-        Map<String, String> body = (Map<String, String>) response.getBody();
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
         return linkedDator.createLinks(semanticDescriptions2, body, this.getUriBase());
     }
 

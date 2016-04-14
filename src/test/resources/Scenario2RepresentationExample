@@ -26,4 +26,5 @@ The representation X from R1 after API Gateway enrichment
   }
 }
 
-If a property is defined as a object property in the ontology, the microservice should represent that property as a object with all the necessary properties to create a link to the related resource. 
+If a property is defined as an object property in the ontology, in otder to create a link to another resource, the microservice should represent that property as an object with all the necessary properties to fulfill the template.
+ 

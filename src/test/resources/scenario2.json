@@ -4,13 +4,29 @@
       "semanticResources": [
         {
           "entity": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#Entity1",
-          "properties": {
-            "p1": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property10",
-            "p2": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property11",
-            "p3": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property12",
-            "p4": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property1E1E2",
-            "p5": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property2E1E2"
-          },
+          "dataProperties": [
+            "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property10",
+            "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property11",
+            "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property12"
+          ],
+          "objectProperties": [
+            {
+              "rel": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property1E1E2",
+              "entity": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#Entity2",
+              "dataProperties": [
+                "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property21",
+                "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property20"
+              ]
+            },
+            {
+              "rel": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property2E1E2",
+              "entity": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#Entity2",
+              "dataProperties": [
+                "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property22",
+                "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property21"               
+              ]
+            }
+          ],
           "uriTemplates": [
             {
               "method": "GET",
@@ -25,22 +41,30 @@
       ]
     },
     {
-      "semanticResources": [        
+      "semanticResources": [
         {
           "entity": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#Entity2",
-          "properties": {
-            "p1": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property20",
-            "p2": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property21",
-            "p3": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property22"
-          },
+          "dataProperties": [
+            "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property20",
+            "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property21",
+            "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property22"
+          ],
           "uriTemplates": [
             {
               "method": "GET",
-              "uri": "resource2/{x}",
+              "uri": "resource2/{x}/{y}",
               "parameters": {
-                "x": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property22"
+                "x": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property20",
+                "y": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property21"
               }
-            }            
+            },
+            {
+              "method": "GET",
+              "uri": "resource2/{z}",
+              "parameters": {
+               	"z": "http://www.semanticweb.org/ivan/ontologies/2016/3/smsesimulator/ontology1#property22"
+              }
+            }
           ]
         }
       ]

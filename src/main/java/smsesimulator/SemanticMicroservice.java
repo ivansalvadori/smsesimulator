@@ -22,7 +22,7 @@ public class SemanticMicroservice implements Publisher, Subscriber, WebApi {
     private String uriBase;
     List<SemanticResource> semanticResources;
     private SemanticDescription semanticDescription;
-    private transient Map<String, SemanticResource> resourcesMap = new HashMap<>();
+    private transient Map<String, SemanticResource> mapUriToResource = new HashMap<>();
 
     public SemanticMicroservice() {
         this.uriBase = DhcpServer.getIpAddress();
@@ -35,17 +35,16 @@ public class SemanticMicroservice implements Publisher, Subscriber, WebApi {
         if (!req.getUriBase().equals(uriBase)) {
             return new HttpResponseBuilder().body("Not found").build();
         }
-        String resource = req.getResource();
 
         // creating a map to facilitate the search for the requested resource
         for (SemanticResource semanticResource : semanticResources) {
             List<UriTemplate> uriTemplates = semanticResource.getUriTemplates();
             for (UriTemplate uriTemplate : uriTemplates) {
-                resourcesMap.put(uriTemplate.getUri(), semanticResource);
+                mapUriToResource.put(uriBase + "/" + uriTemplate.getUri(), semanticResource);
             }
         }
 
-        SemanticResource semanticResource = resourcesMap.get(resource);
+        SemanticResource semanticResource = mapUriToResource.get(req.getFullUri());
         if (semanticResource == null) {
             return new HttpResponseBuilder().body("Not found").build();
         }
@@ -82,15 +81,31 @@ public class SemanticMicroservice implements Publisher, Subscriber, WebApi {
         return semanticDescription;
     }
 
-    private Object serializeAnRepresentation(SemanticResource semanticResource) {
-        Map<String, String> representation = new HashMap<>();
+    private Map<String, Object> serializeAnRepresentation(SemanticResource semanticResource) {
+        Map<String, Object> representation = new HashMap<>();
+        representation.put("@type", semanticResource.getEntity());
 
-        Collection<String> semanticProperties = semanticResource.getProperties().values();
-        for (String semanticProperty : semanticProperties) {
-            representation.put(semanticProperty, String.valueOf(Math.random()).replace("0.", ""));
+        Collection<String> dataProperties = semanticResource.getDataProperties();
+        if (dataProperties != null) {
+
+            for (String semanticProperty : dataProperties) {
+                representation.put(semanticProperty, String.valueOf(Math.random()).replace("0.", ""));
+            }
         }
 
-        representation.put("entity", semanticResource.getEntity());
+        List<SemanticResource> objectProperties = semanticResource.getObjectProperties();
+        if (objectProperties != null) {
+            for (SemanticResource objectProperty : objectProperties) {
+               Map<String, Object> objectPropertySerialization = serializeAnRepresentation(objectProperty);
+               representation.put(objectProperty.getRel(), objectPropertySerialization);
+            }
+
+        }
+
         return representation;
+    }
+
+    public String getUriBase() {
+        return uriBase;
     }
 }

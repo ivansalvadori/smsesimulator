@@ -11,7 +11,6 @@ import java.util.Set;
 import org.apache.jena.ontology.ObjectProperty;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntModelSpec;
-import org.apache.jena.ontology.OntResource;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.shared.JenaException;
 import org.apache.jena.util.FileManager;
@@ -26,91 +25,102 @@ public class LinkedDator {
         this.pathToOntologyFile = pathToOntologyFile;
     }
 
-    public Map<String, String> createLinks(List<SemanticDescription> semanticDescriptions, Map<String, String> resourceRepresentation, String uriBase) {
+    public Map<String, Object> createLinks(List<SemanticDescription> semanticDescriptions, Map<String, Object> resourceRepresentation, String uriBase) {
 
-        Map<String, String> mapEntityToUri = new HashMap<>();
-        Map<String, UriTemplate> mapUriToTemplate = new HashMap<>();
+        String representationType = (String) resourceRepresentation.get("@type");
+        ScenarioType scenarioType = verifyScenarioType(representationType, semanticDescriptions);
+
+        if (scenarioType.equals(ScenarioType.Scenario1)) {
+            System.out.println(representationType + ": scenario1");
+
+        } else if (scenarioType.equals(ScenarioType.Scenario2)) {
+            System.out.println(representationType + ": scenario2");
+
+            Map<String, SemanticResource> mapEntityToResource = new HashMap<>();
+            for (SemanticDescription semanticDescription : semanticDescriptions) {
+                List<SemanticResource> semanticResources = semanticDescription.getSemanticResources();
+                for (SemanticResource semanticResource : semanticResources) {
+                    mapEntityToResource.put(semanticResource.getEntity(), semanticResource);
+                }
+            }
+
+            OntModel ontology = this.loadOntology(pathToOntologyFile);
+            List<ObjectProperty> objectProperties = ontology.listObjectProperties().toList();
+            List<String> objectPropertiesUri = new ArrayList<>();
+            for (ObjectProperty objectProperty : objectProperties) {
+                objectPropertiesUri.add(objectProperty.getURI());
+            }
+
+            Set<String> resourceProperties = resourceRepresentation.keySet();
+            for (String resourceProperty : resourceProperties) {
+                if (objectPropertiesUri.contains(resourceProperty)) {
+                    Map<String, Object> objectPropertyContent = (Map<String, Object>) resourceRepresentation.get(resourceProperty);
+                    Object range = objectPropertyContent.get("@type");
+                    SemanticResource semanticResource = mapEntityToResource.get(range);
+                    List<UriTemplate> uriTemplates = semanticResource.getUriTemplates();
+                    for (UriTemplate uriTemplate : uriTemplates) {
+                        String uri = uriTemplate.getUri();
+                        Set<String> paramKeys = uriTemplate.getParameters().keySet();
+                        for (String paramKey : paramKeys) {
+                            Object objectPropetyContentUriParamValue = objectPropertyContent.get(uriTemplate.getParameters().get(paramKey));
+                            if(objectPropetyContentUriParamValue == null){
+                                objectPropertyContent.remove("@id");
+                                break;
+                            }
+                            uri = uri.replace("{" + paramKey + "}", objectPropetyContentUriParamValue.toString());
+                            objectPropertyContent.put("@id", uriBase + "/" + uri);                              
+                        }
+                        
+                        // if the object property has one link, stop the
+                        // process.
+                        // That's enough
+                        if (objectPropertyContent.get("@id") != null) {
+                            break;
+                        }
+                    }
+                }
+            }
+
+        } else {
+            System.out.println(representationType + ": scenario3");
+        }       
+
+        return resourceRepresentation;
+    }
+
+    private ScenarioType verifyScenarioType(String representationType, List<SemanticDescription> semanticDescriptions) {
         Map<String, SemanticResource> mapEntityToResource = new HashMap<>();
 
         for (SemanticDescription semanticDescription : semanticDescriptions) {
             List<SemanticResource> semanticResources = semanticDescription.getSemanticResources();
             for (SemanticResource semanticResource : semanticResources) {
-                List<UriTemplate> uriTemplates = semanticResource.getUriTemplates();
-                for (UriTemplate uriTemplate : uriTemplates) {
-                    String entity = semanticResource.getEntity();
-                    String uri = uriTemplate.getUri();
-                    mapEntityToUri.put(entity, uri);
-                    mapEntityToResource.put(entity, semanticResource);
-                    mapUriToTemplate.put(uri, uriTemplate);
+                String entity = semanticResource.getEntity();
+                if (mapEntityToResource.get(entity) != null) {
+                    return ScenarioType.Scenario3;
                 }
+                mapEntityToResource.put(entity, semanticResource);
             }
         }
 
+        SemanticResource semanticResource = mapEntityToResource.get(representationType);
         OntModel ontology = this.loadOntology(pathToOntologyFile);
         List<ObjectProperty> objectProperties = ontology.listObjectProperties().toList();
+        List<String> objectPropertiesUri = new ArrayList<>();
 
-        String entity = resourceRepresentation.get("entity");
         for (ObjectProperty objectProperty : objectProperties) {
-            OntResource range = objectProperty.getRange();
-            OntResource domain = objectProperty.getDomain();
-            SemanticResource domainSemanticResource = mapEntityToResource.get(entity);
-            if (domain.toString().equals(entity)) {
-                Collection<String> domainProperties = domainSemanticResource.getProperties().values();
-                String rangeUri = mapEntityToUri.get(range.toString());
-                if (domainProperties.contains(objectProperty.getURI())) {
-                    String resolvedLink = resolveLinkOneToN(objectProperty.getURI(), resourceRepresentation, mapUriToTemplate.get(rangeUri), uriBase);
-                    resourceRepresentation.put(objectProperty.getURI(), resolvedLink);
-                } else if (resourceCanResolveLink(domainSemanticResource, mapEntityToResource.get(domain.toString()).getUriTemplates())) {
-                    String resolvedLink = resolveLinkOneToOne(resourceRepresentation, mapUriToTemplate.get(rangeUri), uriBase);
-                    resourceRepresentation.put(objectProperty.getURI(), resolvedLink);
+            objectPropertiesUri.add(objectProperty.getURI());
+        }
+
+        List<SemanticResource> resourceObjectProperties = semanticResource.getObjectProperties();
+        if (resourceObjectProperties != null) {
+            for (SemanticResource resourceObjectProperty : resourceObjectProperties) {
+                if (objectPropertiesUri.contains(resourceObjectProperty.getRel())) {
+                    return ScenarioType.Scenario2;
                 }
             }
         }
 
-        return resourceRepresentation;
-    }
-
-    // Not sure if this relation is oneToN
-    private String resolveLinkOneToN(String objectProperty, Map<String, String> resourceRepresentation, UriTemplate uriTemplate, String uriBase) {
-        String link = uriTemplate.getUri();
-        Set<String> parameterKeys = uriTemplate.getParameters().keySet();
-        for (String parameterKey : parameterKeys) {
-            String domainResourcePropertyValue = resourceRepresentation.get(objectProperty);
-            String parameterToReplace = String.format("{%s}", parameterKey);
-            link = link.replace(parameterToReplace, domainResourcePropertyValue);
-        }
-        link = String.format("%s/%s", uriBase, link);
-        return link;
-    }
-
-    // Not sure if this relation is oneToOne
-    private String resolveLinkOneToOne(Map<String, String> resourceRepresentation, UriTemplate uriTemplate, String uriBase) {
-        String link = uriTemplate.getUri();
-        Set<String> parameterKeys = uriTemplate.getParameters().keySet();
-        for (String parameterKey : parameterKeys) {
-            String parameterSemanticDefinition = uriTemplate.getParameters().get(parameterKey);
-            String domainResourcePropertyValue = resourceRepresentation.get(parameterSemanticDefinition);
-            String parameterToReplace = String.format("{%s}", parameterKey);
-            link = link.replace(parameterToReplace, domainResourcePropertyValue);
-        }
-        link = String.format("%s/%s", uriBase, link);
-        return link;
-    }
-
-    private boolean resourceCanResolveLink(SemanticResource domainSemanticResource, List<UriTemplate> rangeUriTemplates) {
-        Collection<String> rangeUriParameters = new ArrayList<>();
-        for (UriTemplate uriTemplate : rangeUriTemplates) {
-            rangeUriParameters.addAll(uriTemplate.getParameters().values());
-        }
-        Collection<String> domainResourceProperties = domainSemanticResource.getProperties().values();
-
-        for (String param : rangeUriParameters) {
-            if (domainResourceProperties.contains(param)) {
-                return true;
-            }
-        }
-
-        return false;
+        return ScenarioType.Scenario1;
     }
 
     private OntModel loadOntology(String ontologyFilePath) {
@@ -129,4 +139,5 @@ public class LinkedDator {
 
         return ontoModel;
     }
+
 }
